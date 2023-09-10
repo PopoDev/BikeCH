@@ -1,3 +1,4 @@
+"use client";
 import Head from "next/head";
 
 import Layout from "./components/Layout/Layout";
@@ -6,7 +7,20 @@ import Container from "./components/Container/Container";
 import Map from "./components/Map/Map";
 import Button from "./components/Button/Button";
 
-import styles from "@styles/Home.module.scss";
+import styles from "./Home.module.scss";
+
+import { icon } from "leaflet";
+
+const customMarkerIcon = icon({
+  iconUrl: "/leaflet/images/marker-icon.png", // "leaflet/dist/images/marker-icon.png
+  iconRetinaUrl: "/leaflet/images/marker-icon-2x.png", // "leaflet/dist/images/marker-icon-2x.png
+  shadowUrl: "/leaflet/images/marker-shadow.png", // "leaflet/dist/images/marker-shadow.png
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41],
+});
 
 const DEFAULT_CENTER = [38.907132, -77.036546];
 
@@ -39,7 +53,7 @@ export default function Home() {
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 />
-                <Marker position={DEFAULT_CENTER}>
+                <Marker position={DEFAULT_CENTER} icon={customMarkerIcon}>
                   <Popup>
                     A pretty CSS3 popup. <br /> Easily customizable.
                   </Popup>

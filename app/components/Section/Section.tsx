@@ -9,7 +9,9 @@ interface SectionProps {
   [x: string]: any;
 }
 
-const Section = forwardRef(function Section({ props, ref }: SectionProps) {
+type Ref = HTMLDivElement;
+
+const Section = forwardRef<Ref, SectionProps>(function Section(props, ref) {
   const { children, className, backgroundColor, ...rest } = props;
 
   let sectionClassName = styles.section;
