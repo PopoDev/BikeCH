@@ -30,7 +30,7 @@ const getRoute = async (start, end) => {
 
     let distances = [0];
     let sum = 0;
-    for (let i = 0; i < points.length - 2; i++) {
+    for (let i = 0; i < points.length - 1; i++) {
       sum += calculateDistance(points[i], points[i + 1]);
       distances.push(sum);
     }

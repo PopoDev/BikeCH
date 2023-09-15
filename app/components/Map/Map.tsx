@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 import {
   MapContainer,
@@ -10,12 +10,13 @@ import {
   Polyline,
   useMapEvent,
 } from "react-leaflet";
-import Icon from "../Icon";
 import getRoute from "../OpenRouteService";
 import ElevationProfile from "../ElevationProfile";
-import IconBike from "../IconBike";
+import IconBike from "../BikeIcon";
+import MarkerIcon from "../MarkerIcon";
+import DraggableMarker from "../DraggableMarker";
 
-type OsmPoint = { lat: number; lng: number };
+export type OsmPoint = { lat: number; lng: number };
 const DEFAULT_CENTER: OsmPoint = { lat: 46.948669, lng: 7.455841 };
 const DEFAULT_ZOOM = 12;
 
@@ -43,48 +44,78 @@ export default function Map(props: MapProps) {
     distance: number;
     duration: number;
   };
-  const [route, setRoute] = useState<OsmRoute>({
-    points: [],
-    elevations: [],
-    distances: [],
-    distance: 0,
-    duration: 0,
-  });
+  const [route, setRoute] = useState<OsmRoute | null>(null);
 
-  const [position, setPosition] = useState(DEFAULT_CENTER);
+  const [start, setStart] = useState<OsmPoint | null>(null);
+  const [end, setEnd] = useState<OsmPoint | null>(null);
 
-  function MarkerOnMapClick() {
+  function OnMapClick() {
     const map = useMapEvent("click", (e) => {
       console.log("Clicked at:", e.latlng.toString());
-      setPosition(e.latlng);
 
-      getRoute(toOsrPoint(DEFAULT_CENTER), toOsrPoint(e.latlng))
+      if (!start) {
+        setStart(e.latlng);
+      } else if (!end) {
+        setEnd(e.latlng);
+      } else {
+        setStart(e.latlng);
+        setEnd(null);
+        setRoute(null);
+      }
+    });
+  }
+
+  useEffect(() => ComputeRoute(), [start, end]);
+  function ComputeRoute() {
+    if (start && end) {
+      getRoute(toOsrPoint(start), toOsrPoint(end))
         .then((data) => {
           setRoute(data as OsmRoute);
         })
         .catch((error) => {
           console.error("setRouteError:", error);
         });
-    });
+    }
+  }
+
+  function DisplayRoute() {
     return (
       <div>
+        {start && (
+          <DraggableMarker
+            init={start}
+            icon={MarkerIcon("green")}
+            setPos={setStart}
+          />
+        )}
+        {end && (
+          <DraggableMarker
+            init={end}
+            icon={MarkerIcon("blue")}
+            setPos={setEnd}
+          />
+        )}
         {route ? (
           <div>
             <Polyline
               positions={route.points}
               pathOptions={{ color: "red", weight: 4 }}
             />
-            <Marker position={position} icon={Icon} />
           </div>
         ) : (
           <div>
-            <Popup position={position}>
-              No point found around this location
-            </Popup>
+            {start && end && (
+              <Popup position={start}>No route has been found</Popup>
+            )}
           </div>
         )}
       </div>
     );
+  }
+
+  function RouteManager() {
+    OnMapClick();
+    return <DisplayRoute />;
   }
 
   return (
@@ -100,12 +131,7 @@ export default function Map(props: MapProps) {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           />
-          <Marker position={center} icon={Icon}>
-            <Popup>
-              A pretty CSS3 popup. <br /> Easily customizable.
-            </Popup>
-          </Marker>
-          <MarkerOnMapClick />
+          <RouteManager />
         </MapContainer>
       </div>
       {route && route.points.length > 0 && (
