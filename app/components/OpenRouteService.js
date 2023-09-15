@@ -12,7 +12,6 @@ let orsDirections = new Openrouteservice.Directions({ api_key: API_KEY });
  */
 const getRoute = async (start, end) => {
   try {
-    console.log("Key: ", API_KEY, typeof API_KEY);
     let response = await orsDirections.calculate({
       coordinates: [start, end],
       profile: "cycling-regular",
