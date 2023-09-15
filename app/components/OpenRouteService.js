@@ -1,6 +1,6 @@
 import Openrouteservice from "openrouteservice-js";
 
-const API_KEY = process.env.ORS_API_KEY;
+const API_KEY = process.env.NEXT_PUBLIC_ORS_API_KEY;
 
 let orsDirections = new Openrouteservice.Directions({ api_key: API_KEY });
 
@@ -12,6 +12,7 @@ let orsDirections = new Openrouteservice.Directions({ api_key: API_KEY });
  */
 const getRoute = async (start, end) => {
   try {
+    console.log("Key: ", API_KEY, typeof API_KEY);
     let response = await orsDirections.calculate({
       coordinates: [start, end],
       profile: "cycling-regular",

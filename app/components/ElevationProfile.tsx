@@ -87,7 +87,7 @@ export default function ElevationProfile({
       .append("g")
       .attr("transform", `translate(${margin.left},0)`)
       .call(d3.axisLeft(yScale));
-  }, [elevations, dimensions]);
+  }, [elevations, distances, dimensions]);
 
   return (
     <div
