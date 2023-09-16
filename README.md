@@ -8,6 +8,8 @@
 
 This project use Typescript/Next and the Openrouteservice API to make a web app for bike itinerary planning. It calculate the shortest bike route between a chosen starting and ending point and display the optimal path with it's elevation profile.
 
+![BikeCH_Demo](./images/BikeCH_Demo.jpg)
+
 ## Features
 
 - Effortless Route Planning: Plan a bike tour by entering the starting and ending points.
