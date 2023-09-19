@@ -46,8 +46,6 @@ func LoadFrom(basePath string) (*Graph, error) {
 	elevationsBuffer := readFileAsShortBuffer(elevationsPath)
 	attributesBuffer := readFileAsLongBuffer(attributesPath)
 
-	println("profileIdsBuffer: ", len(profileIdsBuffer))
-
 	nodes := NewGraphNodes(nodesBuffer)
 	sectors := NewGraphSectors(sectorsBuffer)
 	edges := NewGraphEdges(edgesBuffer, profileIdsBuffer, elevationsBuffer)
@@ -185,19 +183,6 @@ func readFileAsInt32Buffer(filePath string) []int32 {
 	size := len(data) / INTEGER_BYTES
 
 	var buffer []int32 = make([]int32, size)
-	binary.Read(reader, binary.BigEndian, &buffer)
-
-	return buffer
-}
-
-// readFileAsIntBuffer reads a binary file and returns its contents as an int buffer.
-func readFileAsIntBuffer(filePath string) []int {
-	data := readFileAsByteBuffer(filePath)
-	reader := bytes.NewReader(data)
-
-	size := len(data) / INTEGER_BYTES
-
-	var buffer []int = make([]int, size)
 	binary.Read(reader, binary.BigEndian, &buffer)
 
 	return buffer
